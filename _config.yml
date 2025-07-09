@@ -1,0 +1,19 @@
+title: Kunduso Blog
+description: Cloud, DevOps, and Technology Blog
+url: "https://kunduso-org.github.io"
+baseurl: ""
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+markdown: kramdown
+permalink: /:year/:month/:day/:title/
+
+# Build settings
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - .bundle/
+  - wordpress-export.xml
