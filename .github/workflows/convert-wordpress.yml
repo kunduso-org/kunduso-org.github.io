@@ -1,0 +1,105 @@
+name: Convert WordPress XML to Jekyll
+
+on:
+  workflow_dispatch:
+    inputs:
+      xml_file:
+        description: 'WordPress XML file name'
+        required: true
+        default: 'wordpress-export.xml'
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          
+      - name: Install dependencies
+        run: |
+          pip install beautifulsoup4 python-dateutil
+          
+      - name: Convert WordPress XML to Jekyll
+        run: |
+          python3 << 'EOF'
+          import xml.etree.ElementTree as ET
+          import re
+          import os
+          from datetime import datetime
+          from urllib.parse import unquote
+          
+          # Parse WordPress XML
+          tree = ET.parse('${{ github.event.inputs.xml_file }}')
+          root = tree.getroot()
+          
+          # Create _posts directory
+          os.makedirs('_posts', exist_ok=True)
+          
+          # WordPress namespace
+          wp_ns = {'wp': 'http://wordpress.org/export/1.2/'}
+          content_ns = {'content': 'http://purl.org/rss/1.0/modules/content/'}
+          
+          posts = []
+          
+          for item in root.findall('.//item'):
+              # Get post type
+              post_type = item.find('wp:post_type', wp_ns)
+              if post_type is None or post_type.text != 'post':
+                  continue
+                  
+              # Get post status
+              status = item.find('wp:status', wp_ns)
+              if status is None or status.text != 'publish':
+                  continue
+              
+              # Extract post data
+              title = item.find('title').text or 'Untitled'
+              content = item.find('content:encoded', content_ns).text or ''
+              pub_date = item.find('pubDate').text
+              post_name = item.find('wp:post_name', wp_ns).text or ''
+              
+              # Parse date
+              date_obj = datetime.strptime(pub_date, '%a, %d %b %Y %H:%M:%S %z')
+              date_str = date_obj.strftime('%Y-%m-%d')
+              
+              # Clean title for filename
+              clean_title = re.sub(r'[^\w\s-]', '', title).strip()
+              clean_title = re.sub(r'[-\s]+', '-', clean_title).lower()
+              
+              # Create filename
+              filename = f"{date_str}-{clean_title}.md"
+              
+              # Create Jekyll front matter
+              front_matter = f"""---
+          title: "{title.replace('"', '\\"')}"
+          date: {date_obj.strftime('%Y-%m-%d %H:%M:%S %z')}
+          categories: []
+          tags: []
+          ---
+          
+          {content}
+          """
+              
+              # Write file
+              with open(f'_posts/{filename}', 'w', encoding='utf-8') as f:
+                  f.write(front_matter)
+              
+              posts.append(filename)
+          
+          print(f"Converted {len(posts)} posts")
+          for post in posts[:10]:  # Show first 10
+              print(f"  - {post}")
+          EOF
+          
+      - name: Commit converted posts
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add _posts/
+          git commit -m "Convert WordPress posts to Jekyll markdown" || exit 0
+          git push
