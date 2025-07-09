@@ -75,15 +75,16 @@ jobs:
               filename = f"{date_str}-{clean_title}.md"
               
               # Create Jekyll front matter
+              escaped_title = title.replace('"', '\\"')
               front_matter = f"""---
-          title: "{title.replace('"', '\\"')}"
-          date: {date_obj.strftime('%Y-%m-%d %H:%M:%S %z')}
-          categories: []
-          tags: []
-          ---
-          
-          {content}
-          """
+title: "{escaped_title}"
+date: {date_obj.strftime('%Y-%m-%d %H:%M:%S %z')}
+categories: []
+tags: []
+---
+
+{content}
+"""
               
               # Write file
               with open(f'_posts/{filename}', 'w', encoding='utf-8') as f:
