@@ -1,0 +1,74 @@
+---
+title: "Install and configure CloudWatch Logs agent on Amazon EC2 instance for Windows using user data"
+date: 2024-07-17 04:00:51 +0000
+categories: []
+tags: []
+---
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000"><strong>Amazon CloudWatch</strong> is a monitoring and observability service that Amazon Web Services (AWS) provides. It monitors log files, collects and tracks metrics, sets alarms, and triggers actions to help AWS users ensure the health and performance of their applications and infrastructure resources. <span style="text-decoration: underline">CloudWatch integrates</span> with various AWS services, <span style="text-decoration: underline">such as Amazon EC2</span>, to provide comprehensive monitoring and observability. It collects logs from Amazon EC2 instances through the <span style="text-decoration: underline">CloudWatch Logs agent</span> installed on the EC2 instance. This agent continuously monitors log files and streams them securely to CloudWatch Logs in near real-time.</span></span></span>
+<!--more-->
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000"><strong>Amazon EC2 user data</strong> is a feature that allows users to provide initialization scripts or commands when launching EC2 instances. User data can be helpful to automate tasks such as installing software, configuring settings, or running scripts during the bootstrapping process of the instance.</span></span></span>
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">In this note, I <span style="text-decoration: underline">demonstrate</span> how to install and configure the Amazon CloudWatch Logs agent on an Amazon EC2 instance <span style="text-decoration: underline">using the user data script</span>. The logic inside the user data script is to:</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">1. Download the Amazon CloudWatch Logs agent installer.</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">2. Install the agent.</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">3. Download the <code><span style="font-size: 15px"><span style="color: #0047ab">config.json</span></span></code> from the SSM Parameter store.</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">4. Configure and start the CloudWatch Logs agent service.</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">I automated the resource provisioning process using Terraform, my favorite IaC tool.</span></span></span>
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">This use case can be classified into <span style="text-decoration: underline">seven steps</span> to create all the required AWS Cloud resources:</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">1. Create the network stack</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">2. Create the security group and egress rule</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">3. Create an Amazon CloudWatch Log Group</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">4. Create an AWS Systems Manager Parameter Store parameter</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">5. Create an IAM role to attach the Amazon EC2 instance</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">6. Update the user data script to install and configure the CloudWatch Logs agent</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">7. Create the Amazon EC2 instance</span></span></span>
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">If you want to follow along, please refer to the Terraform code in my <code><a href="https://github.com/kunduso/ec2-userdata-terraform/tree/add-cloudwatch-agent" target="_blank" rel="noopener">GitHub: kunduso/ec2-userdata-terraform/tree/add-cloudwatch-agent</a></code>. Please take note of the GitHub repository branch.</span></span></span>
+
+<strong><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Step 1: Create the network stack</span></span></span></strong>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">The network components include the Amazon VPC, a public subnet, a route table, an Internet gateway, and a route in the route table to the Internet using the Internet gateway.</span></span></span>
+<img class="alignnone size-full wp-image-4439" src="https://skundunotes.com/wp-content/uploads/2024/07/97-image-1.png" alt="97-image-1" width="593" height="388" />
+<strong><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Step 2: Create the security group and egress rule</span></span></span></strong>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">There is only one <code><span style="font-size: 15px"><span style="color: #0047ab">egress</span></span></code> rule attached to the Security Group, which enables traffic from the VPC to access the Internet (using the Internet gateway).</span></span></span>
+<img class="alignnone size-full wp-image-4440" src="https://skundunotes.com/wp-content/uploads/2024/07/97-image-2.png" alt="97-image-2" width="764" height="211" />
+<strong><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Step 3: Create an Amazon CloudWatch Log Group</span></span></span></strong>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">The log group stores logs sent by the CloudWatch Logs agent running on the Amazon EC2 instance.</span></span></span>
+<img class="alignnone size-full wp-image-4441" src="https://skundunotes.com/wp-content/uploads/2024/07/97-image-3.png" alt="97-image-3" width="415" height="94" />
+<strong><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Step 4: Create an AWS Systems Manager Parameter Store parameter</span></span></span></strong>
+<img class="alignnone size-full wp-image-4442" src="https://skundunotes.com/wp-content/uploads/2024/07/97-image-4.png" alt="97-image-4" width="735" height="174" />
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">The CloudWatch Logs agent accepts a <code><span style="font-size: 15px"><span style="color: #0047ab">JSON</span></span></code> file with keys and values to configure the service. The JSON file is stored inside the AWS Systems Manager Parameter and downloaded by the logic in the user data script.</span></span></span>
+
+<strong><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Step 5: Create an IAM role to attach the Amazon EC2 instance</span></span></span></strong>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">I explained the logic of attaching an IAM role to an Amazon EC2 instance in my note <a href="https://skundunotes.com/2021/11/16/attach-iam-role-to-aws-ec2-instance-using-terraform/" target="_blank" rel="noopener"> -attach-iam-role-to-amazon-ec2-instance</a>. The IAM role attached to the Amazon EC2 instance requires an <code><span style="font-size: 15px"><span style="color: #0047ab">assume_role_policy</span></span></code>. It also requires a list of managed and custom policies. </span></span></span><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">These are:</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000"><strong>(a)</strong> A custom policy that allows access to the SSM Parameter Store parameter.</span></span></span>
+<img class="alignnone size-full wp-image-4443" src="https://skundunotes.com/wp-content/uploads/2024/07/97-image-5.png" alt="97-image-5" width="576" height="252" />
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000"><strong>(b)</strong> A managed policy <code><span style="font-size: 15px"><span style="color: #0047ab">arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy</span></span></code> that allows the Amazon EC2 instance to send custom logs from the instance to Amazon CloudWatch.</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000"><strong>(c)</strong> Optionally, you may attach the managed policy  <code><span style="font-size: 15px"><span style="color: #0047ab">arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore</span></span></code> to enable logging into the Amazon EC2 instance using Session Manager from the AWS Cloud console. For details, please refer to this note <a href="https://skundunotes.com/2023/08/27/provision-an-amazon-ec2-instance-with-session-manager-access-using-terraform/" target="_blank" rel="noopener"> -access-amazon-ec2-instance-using-session-manager</a>.</span></span></span>
+
+<strong><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Step 6: Update the user data script to install and configure the CloudWatch Logs agent</span></span></span></strong>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">The user data script is located as a template file in the <code><span style="font-size: 15px"><span style="color: #0047ab">user_data</span></span></code> folder. The script is configured to download the Amazon CloudWatch Logs agent and AWS CLI installers and install them one after the other. Then, the user data script downloads the SSM Parameter Store parameter value, which is the <code><span style="font-size: 15px"><span style="color: #0047ab">config.json</span></span></code> file, and stores it as a JSON file on the Amazon EC2 instance. Then, it configures the Amazon CloudWatch Logs agent and starts the service.</span></span></span>
+
+<strong><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Step 7: Create the Amazon EC2 instance</span></span></span></strong>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">The last step is to create the Amazon EC2 instance with the properties specified in the previous steps, like the security group, the subnet ID, the instance profile, and the user data script. The user data script, as you can examine in the image below, accepts an SSM Parameter Store parameter name. This parameter is referenced in the user data script to download the JSON configuration file for the Amazon CloudWatch Logs agent.</span></span></span>
+<img class="alignnone size-full wp-image-4444" src="https://skundunotes.com/wp-content/uploads/2024/07/97-image-6.png" alt="97-image-6" width="796" height="318" />
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">After Terraform provisioned all the resources, I waited 5 minutes before accessing the Amazon CloudWatch log group from the AWS Console. That was sufficient time for the Amazon EC2 instance user data script to download the installers, install, and configure the CloudWatch Logs agent service.</span></span></span>
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">And as expected, I could see the logs from the Amazon EC2 instance.</span></span></span>
+<img class="alignnone size-full wp-image-4445" src="https://skundunotes.com/wp-content/uploads/2024/07/97-image-7.png" alt="97-image-7" width="1012" height="498" />
+
+<strong><span style="font-size: 20px"><span style="font-family: calibri"><span style="color: #000000">Best Practices</span></span></span></strong>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">I implemented a few best practices, such as:</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">1. Attaching an IAM role with Amazon EC2 instance.</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">2. Using least privilege IAM permissions.</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">3. No ingress rule for any IP address on any ports.</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">4. Automate the installation process via the idempotent user data PowerShell script.</span></span></span>
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">However, there is one more best practice to consider when creating an Amazon EC2 instance:</span></span></span>
+<ul>
+ 	<li><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000"><strong>Remove public IP address:</strong> The Amazon EC2 instance has a public IP address since it requires Internet access to download the AWS CLI installer. However, suppose the installer is stored in an Amazon S3 bucket (such as the Amazon CloudWatch agent installer). In that case, we can use VPC Endpoint to access the installer. That way, the EC2 instance won't require a public IP address. </span></span></span><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">It is a security best practice to avoid having Amazon EC2 instances with public IP addresses because they can be reached from the internet, making them vulnerable to attacks.</span></span></span></li>
+</ul>
+<em><span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #ff0000">Please note that I could have used a NAT gateway in this use case to prevent the Amazon EC2 instance from having a public IP address to access the Internet, but that would have deviated from the primary use case.</span></span></span></em>
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">And that concludes this note. If you have any questions or suggestions, please do not hesitate to contact me via the comments below.</span></span></span>

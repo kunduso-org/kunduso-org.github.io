@@ -1,0 +1,30 @@
+---
+title: "Getting started with Terraform -Variables"
+date: 2020-11-08 12:22:43 +0000
+categories: []
+tags: []
+---
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Continuing with my learning on Terraform, I realized an exciting type of variable -map type and how to refer to it. And that was when I decided to prepare my notes on Terraform variable types, ways to declare them, assign values, and refer to them. These are my running notes, so I'll keep updating them as I learn more.</span></span></span>
+<!--more-->
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Note:</strong> I'm keeping off of going into the details about -what are variables, why we use them, benefits, reusability, etc</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">An excellent place to start and far more informative than my notes are <a href="https://www.terraform.io/docs/configuration/variables.html" target="_blank" rel="noopener">Terraform Docs</a>. There are some pertinent examples, and Hashicorp maintains the document.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Per Terraform Docs, input variables can be classified into two broad categories: primitive (string, number and boolean) and complex (list, map, object).</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Here is an example of how these variables are declared and referred to.</span></span></span>
+https://gist.github.com/kunduso/ef1b1c2c2e4c8791563d1eadf7e1343c
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Particularly interesting is the list and map variables. I created a list variable with three desired Amazon S3 bucket names and then, using the <code>count</code> parameter, was able to create multiple buckets instead of having a separate resource block for each bucket. The map variable type is a collection of key pair values that can be useful under specific conditions like listing a particular AMI image from an AWS region. I created two entries for the variable <code>ami_location</code> and then referenced that in the <code>resource "aws_instance" "server"</code>. The AMI image selected will depend on the value of the variable <code>var.region</code> that I declared in the variable.tf file and assigned in the terraform.tfvars file (in my case). I found the map variable type very interesting to work with especially looking at flexibility and modularity. And I will admit that it took me time to get my code to be working finally.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Continuing, here are a few ways of assigning values to these variables.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">--<strong><em>using .tfvars or .tfvars.json:</em></strong> This is my preferred option for secured variables like credentials. Also, update .gitignore not to track and commit this file.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">--<em><strong>using variables.tf:</strong> </em>Keep variable declaration in a separate file/s (for e.g. variable.tf and/or variables.tfvars). That way, managing and locating them is quicker than declaring them across all the Terraform configuration files.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">--<em><strong>using environment variables:</strong> </em>Save environment variables with the prefix -"TF_VAR_" in the machine where terraform configuration files are run.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">--<em><strong>using the -var option on commandline:</strong> </em>A variable can be declared in a .tf configuration file but no value assigned to it there. On the command prompt the variable can be passed such as <code>terraform plan -var="access_key=ABVDEFKGLESIFGJWEH" -var="secret_key=fgljk;rtue[p6ruyegdfssgh[t&amp;%^&amp;rfhGUyu%46-rjt"</code></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Note:</strong> There are certain restrictions on variable names—full list <a href="https://www.terraform.io/docs/configuration/variables.html#source" target="_blank" rel="noopener">here</a>.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Some good articles and documentation on Terraform variables:</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="https://www.terraform.io/docs/configuration/variables.html" target="_blank" rel="noopener">Terraform Docs</a></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="https://cloudskills.io/blog/terraform-azure-03" target="_blank" rel="noopener">Cloudskills.io, Getting started with Terraform on Azure: Variables by Luke Orellana</a></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="https://upcloud.com/community/tutorials/terraform-variables/" target="_blank" rel="noopener">UpCloud.com, How to use Terraform variables by Janne Roustemma</a>. I found the comments informative too.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="https://davemccollough.com/2020/10/10/learning-terraform-part-2-variables-expressions-and-functions/" target="_blank" rel="noopener">Learning Terraform – Part 2: Variables, Expressions and Functions by Dave McCollough</a></span></span></span>

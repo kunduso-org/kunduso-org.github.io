@@ -1,0 +1,100 @@
+---
+title: "Getting started with Azure Devops -create a release definition"
+date: 2020-05-22 20:20:15 +0000
+categories: []
+tags: []
+---
+
+<span style="font-family:calibri;"><span style="color:#000000;">This is <strong>part 8 of a multipart series on getting started with Azure DevOps</strong>. Please refer to the below links to access other notes in this series.</span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="https://skundunotes.com/2019/11/07/getting-started-with-azure-devops/" target="_blank" rel="noopener">Part 1: Getting started with Azure DevOps</a></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="http://skundunotes.com/2019/12/24/getting-started-with-azure-devops-work-items/" target="_blank" rel="noopener">Part 2: Getting started with Azure DevOps -work items</a></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="http://skundunotes.com/2020/03/17/getting-started-with-azure-devops-add-a-repo/" target="_blank" rel="noopener">Part 3: Getting started with Azure DevOps -add a repo</a></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="http://skundunotes.com/2020/02/19/getting-started-with-azure-devops-create-a-build-agent/" target="_blank" rel="noopener">Part 4: Getting started with Azure DevOps -create a build agent</a></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="http://skundunotes.com/2020/05/15/getting-started-with-azure-devops-create-a-build-pipeline-part-1-yaml-pipeline/" target="_blank" rel="noopener">Part 5: Getting started with Azure DevOps -create a build pipeline -Part 1 (YAML pipeline)</a></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="http://skundunotes.com/2020/05/15/getting-started-with-azure-devops-create-a-build-pipeline-part-2-classic-editor/" target="_blank" rel="noopener">Part 6: Getting started with Azure DevOps -create a build pipeline -Part 2 (Classic Editor)</a></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="http://skundunotes.com/2019/12/27/azure-devops-deployment-groups/" target="_blank" rel="noopener">Part 7: Getting started with Azure DevOps -create a deployment group</a></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Part 8: Getting started with Azure DevOps -create a release definition (this note)</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">In the previous note (part 7) I provided some information regarding a&nbsp;<a href="http://skundunotes.com/2019/12/27/azure-devops-deployment-groups/" target="_blank" rel="noopener">deployment group</a>. In this note, among other things, I show how to add a deployment group to a release definition. But before I do that, I am going to make some notes about what a release definition is.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">In Azure DevOps, a release definition is typically configured to deploy artifacts that are created from a build pipeline definition. I say typically because other tasks can be performed/automated using a release definition without having to do anything with builds or build artifacts.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Depending upon the purpose, there are four main components to a release definition -</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-release task/s,</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-build pipeline artifact/s,</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-deployment group/s and</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-variable/s.</span></span></span>
+<img class="alignnone size-full wp-image-540" src="https://skundunotes.com/wp-content/uploads/2020/05/ad-gettingstarted-releasedefinition-image1.png" alt="AD-GettingStarted-ReleaseDefinition-Image1" width="836" height="558">
+<blockquote><span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">A <strong>release definition</strong> follows a series of steps mentioned in <strong>release tasks</strong> using the <strong>variables</strong> to deploy the <strong>build pipeline artifacts</strong> to the machines in the <strong>deployment group</strong>.</span></span></span></blockquote>
+<!--more-->
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">We will follow the below steps to create a release definition. There are two prerequisites to this -deployment groups and build pipeline artifacts. <em>We need to have both ready before the creation of a release definition.</em></span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Step 1:</strong> New pipeline</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Navigate to the <em>Pipelines</em> tab under your Azure DevOps project and launch Releases. If this is the first time a release definition is being created in this project, we'll see a -No release pipeline found image.</span></span></span>
+<img class="alignnone size-full wp-image-541" src="https://skundunotes.com/wp-content/uploads/2020/05/ad-gettingstarted-releasedefinition-image2.png" alt="AD-GettingStarted-ReleaseDefinition-Image2" width="499" height="328">
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Click on New pipeline.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Step 2:</strong> Release definition settings</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">The next window has all the settings that are required to create a release definition.</span></span></span>
+<img class="alignnone size-full wp-image-542" src="https://skundunotes.com/wp-content/uploads/2020/05/ad-gettingstarted-releasedefinition-image3.png" alt="AD-GettingStarted-ReleaseDefinition-Image3" width="601" height="352">
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">This view is under the pipeline tab on a release definition. We set two parameters here: artifacts and stages. <strong>Artifacts</strong> belong to build pipeline definition artifacts and <strong>Stages</strong> are the set of release tasks and deployment group. This view is grey-ed because we are requested to select a template (a group of release tasks) to apply to a deployment group.</span></span></span>
+<img class="alignnone size-full wp-image-543" src="https://skundunotes.com/wp-content/uploads/2020/05/ad-gettingstarted-releasedefinition-image4.png" alt="AD-GettingStarted-ReleaseDefinition-Image4" width="569" height="688">
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">My preference here is to select <strong>Empty Job</strong> which allows me to select only those steps that are required to successfully deploy the build-pipeline artifacts. After selecting, I can also update the name from Stage 1 to something meaningful like <em><strong>Development</strong></em> which stands for the environment name on which the release tasks are applied and the deployment group tied to that environment.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Step 3:</strong> Add an artifact</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">This artifact is what we’re deploying to the machine/s in the deployment group. More often than not, artifacts are usually build pipeline artifacts. However, as you can see, you can also select contents from your Azure Repos or Github, etc to be deployed. Once selected, click on Add.</span></span></span>
+<img class="alignnone size-full wp-image-548" src="https://skundunotes.com/wp-content/uploads/2020/05/ad-gettingstarted-releasedefinition-image9.png" alt="AD-GettingStarted-ReleaseDefinition-Image9" width="571" height="612">
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Step 4:</strong> Click on Tasks tab</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Here we see the stage and an agent job.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">An agent is a machine with development tools installed. This is a machine (or group of machines) where we compile our code and generate build artifacts. For release definitions, we would not need them and instead require a deployment group.</span></span></span>
+<img class="alignnone size-full wp-image-544" src="https://skundunotes.com/wp-content/uploads/2020/05/ad-gettingstarted-releasedefinition-image5.png" alt="AD-GettingStarted-ReleaseDefinition-Image5" width="493" height="269">
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Click on the ellipsis next to the Stage name (here it is <em>Development</em>) which launches three options, as can be seen. We select a deployment group job.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Step 5:</strong> On the deployment group job page you have a few options available to orchestrate deployment. A few details that are required are:</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-display name of the deploy group job</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-name of deployment group (select from a pre-filled list)</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-required tags</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-targets to deploy in parallel</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-maximum number of targets to deploy in parallel</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-timeout</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-additional options</span></span></span>
+<img class="alignnone size-full wp-image-545" src="https://skundunotes.com/wp-content/uploads/2020/05/ad-gettingstarted-releasedefinition-image6.png" alt="AD-GettingStarted-ReleaseDefinition-Image6" width="926" height="731">
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Note: Having a deployment group already created is necessary before we create a release definition. The drop-down lists the deployment groups available under our project.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Before I start listing down the rest of the options, let us consider an example. Assume we have 2 environments and say we created 2 deployment groups corresponding to the environments (<a href="http://skundunotes.com/2019/12/27/azure-devops-deployment-groups/">click here</a> to read about how to create deployment groups). And inside each environment, say we have 4 servers -2 for app and 2 for database; 2 X 4 servers in total.</span></span></span>
+<img class="alignnone size-full wp-image-546" src="https://skundunotes.com/wp-content/uploads/2020/05/ad-gettingstarted-releasedefinition-image7.png" alt="AD-GettingStarted-ReleaseDefinition-Image7" width="450" height="130">
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Let us say, we attempt to create a release definition to deploy application code to the app servers. We would create a release definition and link a build pipeline definition and a deployment group. In this case, the app build pipeline artifacts will be deployed to the machines in the deployment group. But we have 2 machines in the deployment group that have nothing to do with app code, these are the two DB machines.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">If I add a deployment group to deploy app code, it will deploy to all the 4 machines, although 2 out of the 4 are database servers. That is unnecessary and can cause release failure. There are two ways to address this -deployment groups and tags.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>What are tags?</strong> Tags are a unique way to identify various machines in a deployment group. In our example here, we can create two tags in the Development deployment group: app and database and assign them accordingly.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Navigate to deployment group -&gt; select deployment group name -&gt; select Targets. This lists the machines in that deployment group. Towards the right side, we have a column for Tags. We can assign tags to uniquely identify machines in a deployment group.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Going back to the release definition -&gt; deployment group job, we now can update the tags and this will ensure that the app code will be deployed only to the machines that have that particular tag.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Targets to deploy to in parallel:</strong> There are times when we do not all the machines in a deployment group to be updated at the same time. Consider a website that is running on two or more machines. If we deploy to all the machines at the same time, the site will be unavailable. Deploying one target at a time addresses that issue.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Maximum number of targets in parallel:</strong> Going back to the same example, consider that the website is running on 10 machines. We cannot deploy in parallel (websites become unavailable) but we do not want to deploy one target at a time too. In that case, we can select Multiple in the previous setting and select what % of machines we are comfortable being updated together. If we select 50% then 5 machines get updated and then the next 5 get updated. This step by step approach ensures that the environment is always available and the website does not go down.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Timeout:</strong> As the title suggests, this is the maximum time for which a deployment process is allowed to execute on a machine.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Step 6:</strong> Add release tasks to a deployment group</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Next to the Deployment group job name is a +. Click on that to launch tasks that would be applied to the machines belonging to a deployment group.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">This launches lots of options that can be applied. These tasks are also classified under build, utility, test, etc. If there is a task that you’re not able to find, go to Marketplace and check if its there. If you find it, click on Get it free. This will install the extension and the associated tasks will be available under All tab or whichever they belong to -build, utility, test, etc.</span></span></span>
+
+<img class="alignnone size-full wp-image-547" src="https://skundunotes.com/wp-content/uploads/2020/05/ad-gettingstarted-releasedefinition-image8.png" alt="AD-GettingStarted-ReleaseDefinition-Image8" width="521" height="128">
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">I use a Powershell script job to run on a deployment group machine to do a specific job. This Powershell script is part of build pipeline artifact. The sequence of steps is something like:</span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-unzip contents of build pipeline artifact</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-stop particular service -windows IIS app pool or service</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-copy files from build artifact location to location where windows service points to</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-start a particular service</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-review if service has started</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">-exit out with success</span></span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Step 7:</strong> Add variables</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Variables come in handy when we have multiple stages (environments) where a product is deployed using the same release definition. Variables also come in handy when we need to pass a secret value (next to value field there is a lock -change variable type to secret) that we do not want to be accessible to others reviewing the release definition or via logs. We set the name, value, and scope of the variable (default is Release).</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><strong>Step 8:</strong> Set retention and options</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">The default value is usually more than enough for retention. Under options, we set the release format. Here too, default is fine.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Once all the options are set, click on save and trigger a release.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">PS: Usually with a new user or a new project the first few release definition runs fail. The logs become handy in understanding how Azure DevOps understands the artifacts, the release steps, and the deployment group.</span></span></span>

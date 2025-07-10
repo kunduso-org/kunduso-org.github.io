@@ -1,0 +1,33 @@
+---
+title: "Pull Request Builds in Azure DevOps -Part 2"
+date: 2020-07-31 17:08:19 +0000
+categories: []
+tags: []
+---
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">This note is in continuation of the previous two notes:
+<a href="https://skundunotes.com/2020/07/17/protect-master-in-azure-repos-using-policies/">Protect master in Azure Repos using&nbsp;policies</a></span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><a href="https://skundunotes.com/2020/07/17/pr-builds-in-azure-devops/">Pull Request Builds in Azure&nbsp;Devops</a>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">In my previous notes, I mentioned the steps involve in creating a pull request build. In this note, I am going to extend that idea. Just to recap, previously I mentioned the following options and settings available in Azure DevOps:</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">(a) when a pull request is submitted a <strong>CI build gets triggered</strong>. This is to ensure that the incoming code after the merge does not break the CI pipeline.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">(b) enable/disable specific steps in a <strong>build definition based on conditions</strong>. Specifically, we can enable/disable certain steps in a build definition based on whether the build was triggered due to a PR, and if the target branch of the PR is <em>'master'</em>.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">(c) ensure that a continuous deployment pipeline <strong>did not trigger on completion of a CI build</strong> that was triggered due to a PR.</span></span></span></span></span></span><!--more-->
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;"><span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">However, an instance came up at work where <strong>I had to enable the continuous deployment trigger on completion of a PR build</strong> but only to one environment. The only way to test the change in the pull request was to deploy it out to an environment. But since it’s a PR (and the change) is not yet merged (in this case to <em>‘master’</em>) I couldn’t allow other linked environments in the continuous deployment pipeline to get the change deployed. I reviewed the Continuous deployment trigger UI and identified the option available to do so.</span></span></span>
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">If you recollect in the previous note, I had <em><strong>disabled</strong></em> <strong>the continuous deployment trigger</strong> for a pull request. Here is the specific condition to <strong>enable</strong> that. I was prompted to provide a target branch -which is <em><strong>‘master’</strong></em> in this case. The target branch here is the one for which a PR is raised. I was also provided the message that 0 of 4 stages are enabled for pull request deployments. I had four stages: Dev, Test, Stage, and Prod.</span></span></span></span></span></span>
+
+<img class="alignnone size-full wp-image-598" src="https://skundunotes.com/wp-content/uploads/2019/02/prbwap-image9.png" alt="PRBwAP-image9" width="630" height="487">
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">On visiting individual stages I navigated to pre-deployment conditions -&gt; triggers &gt; pull request deployment (that was disabled by default). <strong>I enabled that for the Dev stage only.</strong> This is important to note. Generally, you do not want a PR build’s deployment to be enabled for all the environments. Enable that only for the purpose of verification and in as few environments as possible.</span></span></span>
+
+<img class="alignnone size-full wp-image-599" src="https://skundunotes.com/wp-content/uploads/2019/02/prbwap-image10.png" alt="PRBwAP-image10" width="535" height="419">
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">After saving I navigated back to the pipeline -&gt; artifacts -&gt; continuous deployment trigger and noted that the stage message displayed that 1 of 4 stages are enabled for pull request deployment.</span></span></span>
+
+<img class="alignnone size-full wp-image-600" src="https://skundunotes.com/wp-content/uploads/2019/02/prbwap-image11.png" alt="PRBwAP-image11" width="588" height="404">
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">After making this change to the continuous deployment release definition, the process flow will be something like this: A PR gets submitted for master. That PR triggers a CI build. If there are no issues with the code, the CI build succeeds which then triggers a continuous deployment release definition. This release definition deploys the changes in PR to an environment. If environment verification looks good, review the PR, and approve that. On approval, code is merged to the ‘master’ branch which would trigger a CI build. Successful completion of a CI build will then trigger a continuous deployment release definition and as normal flow, the changes will be deployed from an environment to environment.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">I tested this scenario and found that the continuous deployment did trigger on a PR CI build completion and deployed the changes to the Dev stage only and not beyond -and that is what was desired. I verified the changes in the Dev environment and was assured that the changes in the PR were aligned with the objective. I then navigated back to the PR review page and approved it. This resulted in a merge to the target branch (<em>‘master’</em>) which triggered a CI build. On completion of CI build, a continuous deployment release definition was triggered which deployed the changes out to all the environments one after the other.</span></span></span>
+
+<span style="font-size:18px;"><span style="font-family:calibri;"><span style="color:#000000;">Overall, I like the concept behind branch protection and how the idea manifests via different settings and options available in Azure DevOps. I hope you find these three notes to corroborate with your views on PR builds and releases. Please do mention your views in the comment section below.</span></span></span>

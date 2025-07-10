@@ -1,0 +1,29 @@
+---
+title: "Create an Amazon EC2 instance with Session Manager access using Terraform"
+date: 2023-08-27 10:38:01 +0000
+categories: []
+tags: []
+---
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Sometimes, connecting an EC2 instance after provisioning is necessary to verify whether the user-data script ran successfully, review if something is passing/failing, etc. As of August 2023, there are <strong>four ways</strong> of connecting to an Amazon EC2 instance running on Linux from the AWS console  -EC2 Instance Connect, Session Manager, SSH client, and EC2 serial console. Connecting to an Amazon EC2 instance using Session Manager is easiest and most secure.</span></span></span>
+<!--more-->
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Using Terraform, an IaC engineer can manage access to an Amazon EC2 instance by attaching an IAM role to the EC2 instance. Previously, I wrote a note explaining the steps in detail. You can read that at <a href="https://skundunotes.com/2021/11/16/attach-iam-role-to-aws-ec2-instance-using-terraform" target="_blank" rel="noopener"> -attach-iam-role-to-aws-ec2-instance-using-terraform</a>. I will be borrowing heavily from that on this note.</span></span></span>
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Amazon has a managed policy that enables access to an EC2 instance from the AWS console. It is the <code>arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore</code> managed policy. Now that we have identified the managed permission policy, there are <strong>only four easy concepts</strong> to apply.</span></span></span>
+
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">(a) create a <code>aws_iam_role</code> Terraform resource with an <code>assume_role_policy</code> for the <code>ec2.amazonaws.com</code> principal,</span></span></span>
+<img class="alignnone size-full wp-image-3239" src="https://skundunotes.com/wp-content/uploads/2023/08/81-image-2-1.png" alt="81-image-2" width="561" height="367" />
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">(b) Attach the <code>AmazonSSMManagedInstanceCore</code> managed policy to the role,</span></span></span>
+<img class="alignnone size-full wp-image-2843" src="https://skundunotes.com/wp-content/uploads/2023/08/81-image-3.png" alt="81-image-3" width="846" height="136" />
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">(c) create the <code>aws_iam_instance_profile</code> role from the <code>aws_iam_role</code>,</span></span></span>
+<img class="alignnone  wp-image-3240" src="https://skundunotes.com/wp-content/uploads/2023/08/81-image-4-1.png" alt="81-image-4" width="629" height="111" />
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">and finally, (d) attach the <code>iam_instance_profile</code> to the EC2 instance.</span></span></span>
+<img class="alignnone size-full wp-image-3241" src="https://skundunotes.com/wp-content/uploads/2023/08/81-image-5-1.png" alt="81-image-5" width="599" height="230" />
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">If you want the Terraform code sample, look at my <a href="https://github.com/kunduso/ec2-userdata-terraform/tree/add-iam-role-for-session-manager" target="_blank" rel="noopener">GitHub repository: ec2-userdata-terraform</a>.</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Please note that the branch name is  <code>add-iam-role-for-session-manager</code>. The GitHub repository includes the necessary code to provision additional resources like the VPC, subnet, route table, internet gateway, etc. Using the code in the GitHub repository, you can create an EC2 instance and connect to that using the session manager from the AWS Console. While reviewing the code, please review the security group rule. The security group attached to the Amazon EC2 instance does not have an <code>ingress</code> rule. The session manager <strong>bypasses</strong> the ingress security group rule. However, it requires the <code>egress</code> rule to communicate with the SSM endpoint.</span></span></span>
+<img class="alignnone size-full wp-image-3247" src="https://skundunotes.com/wp-content/uploads/2023/08/81-image-6.png" alt="81-image-6" width="547" height="283" />
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">After running the Terraform code, you will see that an Amazon EC2 instance has been created in your AWS console. Select the instance and click on the Connect button. You will be presented with the below options, in case of Linux.</span></span></span>
+<img class="alignnone size-full wp-image-2841" src="https://skundunotes.com/wp-content/uploads/2023/08/81-image-1.png" alt="81-image-1" width="812" height="299" />
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Select "Session Manager" and click on Connect. You will then have CLI access to the instance.</span></span></span>
+<span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">There are specific AMIs that support session manager access. These AMIs are mentioned in this user guide: <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/ami-preinstalled-agent.html" target="_blank" rel="noopener">AWS Systems Manager</a>. If interested, try to provision the resources using the Terraform code from the GitHub repository. Please let me know if you have any questions or suggestions.</span></span></span>
