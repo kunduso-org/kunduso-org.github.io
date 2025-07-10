@@ -25,7 +25,7 @@ I categorized these articles under separate menu items so that you can easily se
 
 If you've come this far, thanks for reading and for your curiosity. If you've searched for a particular technical use case and have not found it, please do not hesitate to contact me using the **[Contact page](/contact/)**. I might not have written about a particular use case, but maybe I've encountered one and can help you.
 
-Are you on LinkedIn? Let's connect. Please **[click here](https://www.linkedin.com/in/sourav12kundu/)** and drop in a message that you found me at skundunotes.com. I also love reading books and sometimes share about them on **[Twitter](https://twitter.com/isouravkundu)**.
+Are you on LinkedIn? Let's connect. Please **[click here](https://www.linkedin.com/in/kunduso/)** and drop in a message that you found me at skundunotes.com. I also love reading books and sometimes share about them on **[Twitter](https://twitter.com/isouravkundu)**.
 
 ---
 

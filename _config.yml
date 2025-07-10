@@ -1,11 +1,29 @@
-title: Kunduso Blog
-description: Cloud, DevOps, and Technology Blog
+title: Kunduso Notes
+description: Cloud, DevOps, and Technology Blog - AWS, Terraform, Azure DevOps, GitHub Actions, Docker, and Infrastructure as Code
 url: "https://kunduso-org.github.io"
 baseurl: ""
+
+author:
+  name: Sourav Kundu
+  twitter: isouravkundu
+  github: kunduso
+  linkedin: kunduso
+
+# Social settings
+github_url: https://github.com/kunduso
+linkedin_url: https://www.linkedin.com/in/kunduso/
+twitter_url: https://twitter.com/isouravkundu
+credly_url: https://credly.com/users/kunduso/badges
+
+# SEO settings
+twitter:
+  username: isouravkundu
+  card: summary_large_image
 
 plugins:
   - jekyll-feed
   - jekyll-sitemap
+  - jekyll-seo-tag
 
 markdown: kramdown
 permalink: /:year/:month/:day/:title/
