@@ -8,6 +8,9 @@ on:
         required: true
         default: 'wordpress-export.xml'
 
+permissions:
+  contents: write
+
 jobs:
   convert:
     runs-on: ubuntu-latest
