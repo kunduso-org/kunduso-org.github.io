@@ -3,12 +3,12 @@ layout: default
 ---
 
 <article>
-    <header>
-        <h1>{{ page.title }}</h1>
-        <div class="post-meta">
+    <header style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #0066cc;">
+        <h1 style="font-size: 2.5em; color: #0066cc; margin-bottom: 15px; line-height: 1.2;">{{ page.title }}</h1>
+        <div class="post-meta" style="font-size: 1.1em; color: #666;">
             <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
             {% if page.tags and page.tags.size > 0 %}
-            <div class="tags" style="margin-top: 10px;">
+            <div class="tags" style="margin-top: 15px;">
                 {% for tag in page.tags %}
                     <a href="/tags/#{{ tag | slugify }}" class="tag">{{ tag }}</a>
                 {% endfor %}
@@ -17,11 +17,11 @@ layout: default
         </div>
     </header>
     
-    <div class="post-content">
+    <div class="post-content" style="font-size: 1.1em; line-height: 1.7;">
         {{ content }}
     </div>
 </article>
 
 <nav style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
-    <a href="/posts/">&larr; Back to all posts</a>
+    <a href="/posts/" style="color: #0066cc; text-decoration: none; font-weight: 500;">&larr; Back to all posts</a>
 </nav>
