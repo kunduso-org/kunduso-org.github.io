@@ -21,17 +21,15 @@ jobs:
           python-version: '3.9'
           
       - name: Install dependencies
-        run: |
-          pip install beautifulsoup4 python-dateutil
+        run: pip install beautifulsoup4 python-dateutil
           
       - name: Convert WordPress XML to Jekyll
         run: |
-          python3 << 'EOF'
+          cat > convert.py << 'EOF'
           import xml.etree.ElementTree as ET
           import re
           import os
           from datetime import datetime
-          from urllib.parse import unquote
           
           # Parse WordPress XML
           tree = ET.parse('${{ github.event.inputs.xml_file }}')
@@ -77,14 +75,14 @@ jobs:
               # Create Jekyll front matter
               escaped_title = title.replace('"', '\\"')
               front_matter = f"""---
-title: "{escaped_title}"
-date: {date_obj.strftime('%Y-%m-%d %H:%M:%S %z')}
-categories: []
-tags: []
----
-
-{content}
-"""
+          title: "{escaped_title}"
+          date: {date_obj.strftime('%Y-%m-%d %H:%M:%S %z')}
+          categories: []
+          tags: []
+          ---
+          
+          {content}
+          """
               
               # Write file
               with open(f'_posts/{filename}', 'w', encoding='utf-8') as f:
@@ -93,9 +91,10 @@ tags: []
               posts.append(filename)
           
           print(f"Converted {len(posts)} posts")
-          for post in posts[:10]:  # Show first 10
+          for post in posts[:10]:
               print(f"  - {post}")
           EOF
+          python3 convert.py
           
       - name: Commit converted posts
         run: |
