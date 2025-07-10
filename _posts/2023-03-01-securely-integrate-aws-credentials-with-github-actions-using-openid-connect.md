@@ -1,8 +1,9 @@
 ---
+layout: post
 title: "Securely integrate AWS Credentials with GitHub Actions using OpenID Connect"
 date: 2023-03-01 03:29:30 +0000
-categories: []
-tags: []
+categories: [AWS, GitHub Actions]
+tags: [AWS, GitHub Actions, OpenID Connect, IAM, Security, CI/CD]
 ---
 
 <span style="font-size: 18px"><span style="font-family: calibri"><span style="color: #000000">Recently, I had a request come up where I had to interact with AWS resources from GitHub Actions. In the past, I had done this using Azure Pipelines. I did that by: <a href="https://skundunotes.com/2022/03/30/manage-secure-variables-with-azure-devops-library-and-azure-pipelines/" target="_blank" rel="noopener">(a) storing the credentials (access_key and secret_key of the IAM user) as secure variables in the Azure DevOps Library variable group and (b) by allowing Azure Pipelines builder to access the secure variables in the variable group</a>.</span></span></span>

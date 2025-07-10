@@ -6,11 +6,25 @@
     <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
     <meta name="description" content="{{ site.description }}">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
-        header { border-bottom: 1px solid #eee; margin-bottom: 30px; padding-bottom: 20px; }
-        h1 a { text-decoration: none; color: #333; }
-        .post-meta { color: #666; font-size: 0.9em; }
-        nav a { margin-right: 20px; text-decoration: none; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; color: #333; }
+        header { border-bottom: 2px solid #0066cc; margin-bottom: 30px; padding-bottom: 20px; }
+        h1 a { text-decoration: none; color: #0066cc; font-weight: 700; }
+        nav { margin-top: 15px; }
+        nav a { margin-right: 25px; text-decoration: none; color: #666; font-weight: 500; }
+        nav a:hover { color: #0066cc; }
+        .search-container { margin: 20px 0; }
+        .search-box { width: 100%; max-width: 400px; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px; }
+        .search-box:focus { border-color: #0066cc; outline: none; }
+        .post-meta { color: #666; font-size: 0.9em; margin: 10px 0; }
+        .tags { margin: 15px 0; }
+        .tag { background: #f0f8ff; color: #0066cc; padding: 4px 8px; border-radius: 3px; font-size: 0.8em; margin-right: 5px; text-decoration: none; }
+        .tag:hover { background: #0066cc; color: white; }
+        img { max-width: 100%; height: auto; }
+        blockquote { border-left: 4px solid #0066cc; margin: 20px 0; padding-left: 20px; font-style: italic; }
+        .post-list { list-style: none; padding: 0; }
+        .post-list li { margin: 15px 0; padding: 15px; border: 1px solid #eee; border-radius: 5px; }
+        .post-list a { text-decoration: none; color: #0066cc; font-weight: 600; }
+        .post-list a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -19,15 +33,44 @@
         <nav>
             <a href="/">Home</a>
             <a href="/posts/">All Posts</a>
+            <a href="/tags/">Tags</a>
         </nav>
+        <div class="search-container">
+            <input type="text" id="search-box" class="search-box" placeholder="Search posts..." onkeyup="searchPosts()">
+        </div>
     </header>
     
     <main>
         {{ content }}
     </main>
     
+    {% if page.tags and page.tags.size > 0 %}
+    <div class="tags">
+        <strong>Tags:</strong>
+        {% for tag in page.tags %}
+            <a href="/tags/#{{ tag | slugify }}" class="tag">{{ tag }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
     <footer style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; color: #666;">
         <p>&copy; {{ 'now' | date: "%Y" }} {{ site.title }}. Powered by Jekyll & GitHub Pages.</p>
     </footer>
+    
+    <script>
+        function searchPosts() {
+            const searchTerm = document.getElementById('search-box').value.toLowerCase();
+            const posts = document.querySelectorAll('.post-list li, .post-item');
+            
+            posts.forEach(post => {
+                const text = post.textContent.toLowerCase();
+                if (text.includes(searchTerm) || searchTerm === '') {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>

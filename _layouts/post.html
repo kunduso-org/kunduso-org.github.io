@@ -1,0 +1,27 @@
+---
+layout: default
+---
+
+<article>
+    <header>
+        <h1>{{ page.title }}</h1>
+        <div class="post-meta">
+            <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+            {% if page.tags and page.tags.size > 0 %}
+            <div class="tags" style="margin-top: 10px;">
+                {% for tag in page.tags %}
+                    <a href="/tags/#{{ tag | slugify }}" class="tag">{{ tag }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </header>
+    
+    <div class="post-content">
+        {{ content }}
+    </div>
+</article>
+
+<nav style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+    <a href="/posts/">&larr; Back to all posts</a>
+</nav>
