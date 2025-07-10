@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+    <meta name="description" content="{{ site.description }}">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
+        header { border-bottom: 1px solid #eee; margin-bottom: 30px; padding-bottom: 20px; }
+        h1 a { text-decoration: none; color: #333; }
+        .post-meta { color: #666; font-size: 0.9em; }
+        nav a { margin-right: 20px; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="/">{{ site.title }}</a></h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/posts/">All Posts</a>
+        </nav>
+    </header>
+    
+    <main>
+        {{ content }}
+    </main>
+    
+    <footer style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; color: #666;">
+        <p>&copy; {{ 'now' | date: "%Y" }} {{ site.title }}. Powered by Jekyll & GitHub Pages.</p>
+    </footer>
+</body>
+</html>
