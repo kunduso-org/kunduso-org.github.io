@@ -41,9 +41,10 @@ This blog bridges the gap between basic tutorials and comprehensive courses, off
 
 ## 👨‍💻 About the Author
 
-<img src="assets/images/profile.png" alt="Sourav Kundu -  DevOps Expert" width="200" align="right" style="border-radius: 50%; margin-left: 20px;">
+<img src="assets/images/profile.png" alt="Sourav Kundu - HashiCorp Ambassador and DevOps Expert" width="200" align="right" style="border-radius: 50%;">
 
-**Sourav Kundu** is a **HashiCorp Ambassador** (2022, 2023, 2024, 2025) and seasoned DevOps professional with over two decades of software engineering experience and more than a decade specializing in DevOps principles and cloud technologies.
+
+**Sourav Kundu** is a **DevOps Consultant at Amazon Web Services** and **HashiCorp Ambassador** (2022, 2023, 2024, 2025) with over two decades of software engineering experience and more than a decade specializing in DevOps principles and cloud technologies.
 
 ### 🏆 Credentials & Recognition
 - **HashiCorp Ambassador** - Recognized for contributions to Terraform community (2022, 2023, 2024, 2025)
