@@ -18,8 +18,8 @@
 - [🎯 Content Categories](#-content-categories)
 - [💡 Why This Blog?](#-why-this-blog)
 - [🚀 Getting Started](#-getting-started)
-- [📊 Analytics & Observability](#-analytics--observability)
-- [🏗️ Project Structure](#️-project-structure)
+- [📊 Analytics & Observability](#analytics--observability)
+- [🏗️ Project Structure](#-project-structure)
 - [🤝 Connect & Follow](#-connect--follow)
 - [🤝 Contributing](#-contributing)
 - [🛠️ Technology Stack](#️-technology-stack)
@@ -113,8 +113,7 @@ This blog fills the gap between:
 - ✅ Working code examples
 - ✅ Links to GitHub repositories
 - ✅ Best practices and considerations
-## 🚀 
-Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -166,7 +165,7 @@ Before you begin, ensure you have the following installed on your system:
 - **Port already in use**: Use `bundle exec jekyll serve --port 4001` to use a different port
 
 **Need help?** Check the [Jekyll documentation](https://jekyllrb.com/docs/) or [open an issue](https://github.com/kunduso-org/kunduso-org.github.io/issues).## 📊 
-Analytics & Observability
+## Analytics & Observability
 
 Track your blog's performance and understand your audience with built-in and external analytics solutions.
 
@@ -248,8 +247,8 @@ google_analytics:
 **Tools for Advanced Analytics:**
 - **Google Search Console** - SEO performance and search queries
 - **Social Media Analytics** - Track shares and engagement
-- **GitHub Insights** - Repository stars, forks, and contributor activity## 🏗
-️ Project Structure
+- **GitHub Insights** - Repository stars, forks, and contributor activity
+## 🏗 Project Structure
 
 ```
 kunduso-org.github.io/
@@ -302,8 +301,9 @@ The site automatically deploys via GitHub Actions:
 3. **Deployment**: Generated site deploys to GitHub Pages
 4. **URL**: Live at [https://kunduso-org.github.io](https://kunduso-org.github.io)
 
-**Build Status**: [![Build and Deploy](https://github.com/kunduso-org/kunduso-org.github.io/actions/workflows/pages.yml/badge.svg)](https://github.com/kunduso-org/kunduso-org.github.io/actions/workflows/pages.yml)## 
-🤝 Connect & Follow
+**Build Status**: [![Build and Deploy](https://github.com/kunduso-org/kunduso-org.github.io/actions/workflows/pages.yml/badge.svg)](https://github.com/kunduso-org/kunduso-org.github.io/actions/workflows/pages.yml)
+
+## 🤝 Connect & Follow
 
 ### Professional Links
 - **🔗 [LinkedIn](https://www.linkedin.com/in/kunduso/)** - Professional network and career updates
@@ -319,8 +319,9 @@ The site automatically deploys via GitHub Actions:
 - **🐛 Issues & Suggestions**: [Open an issue](https://github.com/kunduso-org/kunduso-org.github.io/issues) on GitHub
 - **💡 Content Requests**: Mention specific use cases you'd like covered
 
-> *"If you've searched for a particular technical use case and haven't found it, please don't hesitate to reach out. I might not have written about it yet, but I may have encountered it and can help."*## 🤝 Co
-ntributing
+> *"If you've searched for a particular technical use case and haven't found it, please don't hesitate to reach out. I might not have written about it yet, but I may have encountered it and can help."*
+
+## 🤝 Contributing
 
 We welcome contributions to improve the blog, fix issues, or suggest new content ideas!
 
@@ -375,8 +376,9 @@ We welcome contributions to improve the blog, fix issues, or suggest new content
 - **Responsive Design**: Ensure changes work on mobile and desktop
 - **SEO Friendly**: Maintain proper heading structure and meta tags
 - **Performance**: Optimize images and minimize external dependencies
-- **Accessibility**: Use semantic HTML and proper alt text for images##
- 🛠️ Technology Stack
+- **Accessibility**: Use semantic HTML and proper alt text for images
+
+## 🛠️ Technology Stack
 
 ### Core Technologies
 
@@ -427,8 +429,9 @@ graph LR
 - **CDN Distribution** - Global content delivery via GitHub Pages
 - **Responsive Design** - Mobile-optimized layouts
 - **SEO Optimization** - Structured data and meta tags
-- **RSS Feed** - Automatic feed generation for subscribers## 📄 L
-icense
+- **RSS Feed** - Automatic feed generation for subscribers
+
+## 📄 License
 
 This project is released into the **public domain** under the [Unlicense](https://unlicense.org/).
 
