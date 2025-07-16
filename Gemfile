@@ -4,7 +4,7 @@ gem "jekyll", "~> 4.2.0"
 gem "jekyll-feed"
 gem "jekyll-sitemap"
 gem "jekyll-seo-tag"
-gem "nokogiri", "~> 1.13.0"
+gem "nokogiri", ">= 1.18.8"
 gem "webrick", "~> 1.7"
 
 # Windows specific
